@@ -10,16 +10,25 @@ function knightMoves(starting, ending) {
         [2, -1],
         [1, -2],
     ];
-    const queueVisited = [starting];
 
-    queueVisited.forEach(function(visitedCoord) {
-        knightTraversals.forEach(function(movementArr) {
-            const newPosition = [visitedCoord[0] + movementArr[0], visitedCoord[1] + movementArr[1]];
-            if (validatePosition(newPosition)) {
-                queueVisited.push(newPosition);     
+    (function BFS(queueVisited, currentPos) {
+        for (let i = 0; i < knightTraversals.length; i++) {
+            const newPosition = [currentPos[0] + knightTraversals[i][0], currentPos[1] + knightTraversals[i][1]];
+            if (validatePosition(newPosition) && !(newPosition in queueVisited)) {
+                queueVisited.push(newPosition);
+                BFS(queueVisited, newPosition);
             }
-        }) 
-    }) 
+        }
+    })(starting, starting);
+
+    // queueVisited.forEach(function(visitedCoord) {
+    //     knightTraversals.forEach(function(movementArr) {
+    //         const newPosition = [visitedCoord[0] + movementArr[0], visitedCoord[1] + movementArr[1]];
+    //         if (validatePosition(newPosition)) {
+    //             queueVisited.push(newPosition);     
+    //         }
+    //     }) 
+    // }) 
 
 }   
 

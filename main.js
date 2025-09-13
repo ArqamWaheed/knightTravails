@@ -11,17 +11,36 @@ function knightMoves(starting, ending) { // Both are arrays.
         [1, -2],
     ];
 
-    const queueVisited = new Set();
-    queueVisited.add(JSON.stringify(starting));
+    const queueVisited = new Map([
+        [JSON.stringify(starting), null],
+    ]);
+    
+    function calculateShortestPath(map, node, path = [JSON.parse(node)]) {
+        let parentNode = map.get(node);
+        if (parentNode === null) {
+            return path;
+        }
+        path.push(JSON.parse(parentNode));
+        return calculateShortestPath(map, parentNode, path);
+    }
+
     const queueBFS = [...starting];
     return (function BFS(currentPos) {
         for (let i = 0; i < knightTraversals.length; i++) {
             const newPosition = [currentPos[0] + knightTraversals[i][0], currentPos[1] + knightTraversals[i][1]];
             if (validatePosition(newPosition) && !(queueVisited.has(JSON.stringify(newPosition)))) { // Havent visited the queue.
-                if (JSON.stringify(newPosition) === JSON.stringify(ending)) {
-                    return "Reached gurt";
+                if (JSON.stringify(newPosition) === JSON.stringify(ending)) { // Found the item
+                    queueVisited.set(JSON.stringify(newPosition), JSON.stringify(currentPos));
+                    const shortestPath = calculateShortestPath(queueVisited, JSON.stringify(ending));
+                    return (function(shortestPath) {
+                        shortestPath.reverse();
+                        console.log(`You made it in ${shortestPath.length - 1} moves!  Here's your path:`);
+                        shortestPath.forEach(element => {
+                            console.log(element);
+                        });
+                    })(shortestPath);
                 }   
-                queueVisited.add(JSON.stringify(newPosition));
+                queueVisited.set(JSON.stringify(newPosition), JSON.stringify(currentPos));
                 queueBFS.push(newPosition);
             }
         }
@@ -40,4 +59,4 @@ function validatePosition(Arr) {
     return true;
 }
 
-console.log(knightMoves([0,0], [1,2]));
+knightMoves([3,3],[4,3]);
